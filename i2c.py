@@ -26,15 +26,16 @@ from smbus import SMBus
 
 from . import common as c
 from .lcd import BaseCharLCD
+import logging
 
 # PCF8574 backlight control
-PCF8574_BACKLIGHT = 0x08
-PCF8574_NOBACKLIGHT = 0x00
+PCF8574_BACKLIGHT = 0x00
+PCF8574_NOBACKLIGHT = 0x80
 
 # PCF8574 Pin bitmasks
-PCF8574_E = 0x4
-PIN_READ_WRITE = 0x2  # Not used?
-PIN_REGISTER_SELECT = 0x1  # Not used?
+PCF8574_E = 0x40
+PIN_READ_WRITE = 0x20  # Not used?
+PIN_REGISTER_SELECT = 0x10  # Not used?
 
 # MCP230XX backlight control
 MCP230XX_BACKLIGHT = 0x80
@@ -97,7 +98,7 @@ class CharLCD(BaseCharLCD):
 
         :param address: The I2C address of your LCD.
         :type address: int
-        :param i2c_expander: Set your IÂ²C chip type. Supported: "PCF8574", "MCP23008", "MCP23017".
+        :param i2c_expander: Set your I²C chip type. Supported: "PCF8574", "MCP23008", "MCP23017".
         :type i2c_expander: string
         :param expander_params: Parameters for expanders, in a dictionary. Only needed for MCP23017
             gpio_bank - This must be either ``A`` or ``B``
@@ -123,6 +124,8 @@ class CharLCD(BaseCharLCD):
         :type backlight_enabled: bool
 
         """
+
+	#logging.basicConfig(filename='i2c.log',level=logging.INFO)
         # Set own address and port.
         self._address = address
         self._port = port
@@ -221,11 +224,17 @@ class CharLCD(BaseCharLCD):
 
     def _send_data(self, value):
         if self._i2c_expander == 'PCF8574':
-            self.bus.write_byte(self._address, (c.RS_DATA | (value & 0xF0)) | self._backlight)
-            self._pulse_data(c.RS_DATA | (value & 0xF0))
-            self.bus.write_byte(self._address, (c.RS_DATA |
-                                               ((value << 4) & 0xF0)) | self._backlight)
-            self._pulse_data(c.RS_DATA | ((value << 4) & 0xF0))
+	    #logging.info('I2C: send_data Byte: 0x%x' %(value))
+            self.bus.write_byte(self._address, (c.RS_DATA | ((value >> 4) & 0x0F)) | self._backlight)
+	    #logging.info('Nibble 1: 0x%x' %((c.RS_DATA | ((value >> 4) & 0x0F)) | self._backlight))
+
+            self._pulse_data(c.RS_DATA | ((value >> 4)& 0x0F))
+	    #logging.info('Pulse 1: 0x%x' %(c.RS_DATA|(value >> 4)& 0x0F))
+
+            self.bus.write_byte(self._address, (c.RS_DATA |(value  & 0x0F)) | self._backlight)
+	    #logging.info('Nibble 2: 0x%x' %((c.RS_DATA |(value  & 0x0F)) | self._backlight))
+            self._pulse_data(c.RS_DATA | (value  & 0x0F))
+	    #logging.info('Pulse 2: 0x%x' %(c.RS_DATA | (value & 0x0F)))
         elif self._i2c_expander in ['MCP23008', 'MCP23017']:
             self._mcp_data |= MCP230XX_RS
             self._pulse_data(value >> 4)
@@ -234,11 +243,11 @@ class CharLCD(BaseCharLCD):
     def _send_instruction(self, value):
         if self._i2c_expander == 'PCF8574':
             self.bus.write_byte(self._address, (c.RS_INSTRUCTION |
-                                               (value & 0xF0)) | self._backlight)
-            self._pulse_data(c.RS_INSTRUCTION | (value & 0xF0))
+                                               ((value >> 4) & 0x0F)) | self._backlight)
+            self._pulse_data(c.RS_INSTRUCTION | ((value >> 4) & 0x0F))
             self.bus.write_byte(self._address, (c.RS_INSTRUCTION |
-                                               ((value << 4) & 0xF0)) | self._backlight)
-            self._pulse_data(c.RS_INSTRUCTION | ((value << 4) & 0xF0))
+                                               (value  & 0x0F)) | self._backlight)
+            self._pulse_data(c.RS_INSTRUCTION | (value & 0x0F))
         elif self._i2c_expander in ['MCP23008', 'MCP23017']:
             self._mcp_data &= ~MCP230XX_RS
             self._pulse_data(value >> 4)

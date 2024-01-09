@@ -27,6 +27,7 @@ from collections import namedtuple
 from . import codecs
 from . import common as c
 from .compat import range
+import logging
 
 
 LCDConfig = namedtuple('LCDConfig', 'rows cols dotsize')
@@ -38,7 +39,7 @@ class BaseCharLCD(object):
 
     # Init, setup, teardown
 
-    def __init__(self, cols=20, rows=4, dotsize=8, charmap='A02', auto_linebreaks=True):
+    def __init__(self, cols=16, rows=2, dotsize=8, charmap='A02', auto_linebreaks=True):
         """
         Character LCD controller. Base class only, you should use a subclass.
 
@@ -99,10 +100,11 @@ class BaseCharLCD(object):
             self.command(0x03)
             c.msleep(4.5)
             self.command(0x03)
-            c.msleep(4.5)
+	    c.msleep(4.5)
             self.command(0x03)
             c.usleep(100)
             self.command(0x02)
+            #self.command(0x02)
         elif self.data_bus_mode == c.LCD_8BITMODE:
             # Hitachi manual page 45
             self.command(0x30)
@@ -110,8 +112,6 @@ class BaseCharLCD(object):
             self.command(0x30)
             c.usleep(100)
             self.command(0x30)
-        else:
-            raise ValueError('Invalid data bus mode: {}'.format(self.data_bus_mode))
 
         # Write configuration to display
         self.command(c.LCD_FUNCTIONSET | displayfunction)
@@ -124,6 +124,7 @@ class BaseCharLCD(object):
         c.usleep(50)
 
         # Clear display
+	#cbpi.app.logger.info('clearing display')
         self.clear()
 
         # Configure entry mode
@@ -257,7 +258,7 @@ class BaseCharLCD(object):
 
         .. code::
 
-            >>> bstring = 'Temperature: 30Â°C'
+            >>> bstring = 'Temperature: 30°C'
             >>> bstring
             'Temperature: 30\xc2\xb0C'
             >>> bstring.decode('utf-8')

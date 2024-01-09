@@ -72,7 +72,7 @@ LCD_5x8DOTS = 0x00
 
 # Flags for RS pin modes
 RS_INSTRUCTION = 0x00
-RS_DATA = 0x01
+RS_DATA = 0x10
 
 
 # # # Helper classes # # #

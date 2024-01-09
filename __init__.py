@@ -250,11 +250,11 @@ def show_multidisplay(refresh):
         line2 = (u"Step: %s" % (s.name)).ljust(16)[:16]
         line2_state = 1
       elif line2_state == 1:
-        line2 = (u"Targ. T:%6.2f%s" % (float(cbpi.cache.get("kettle")[id1].target_temp),(u"Â°C"))).ljust(16)[:16]
+        line2 = (u"Targ. T:%6.2f%s" % (float(cbpi.cache.get("kettle")[id1].target_temp),(u"°C"))).ljust(16)[:16]
         line2_state = 2
       elif line2_state == 2:
         try:
-          line2 = (u"Curr. T:%6.2f%s" % (float(current_sensor_value_id1),(u"Â°C"))).ljust(16)[:16]
+          line2 = (u"Curr. T:%6.2f%s" % (float(current_sensor_value_id1),(u"°C"))).ljust(16)[:16]
         except:
           cbpi.app.logger.info("LCDDisplay  - singlemode current_sensor_value_id1 exception %s" % (current_sensor_value_id1))
           line2 = (u"Curr. Temp: %s" % (("No Data")))[:16]
@@ -304,7 +304,7 @@ line2_state = 0
 
 def show_singlemode(id1):
 
-    cbpi.app.logger.info("LCDDisplay  - id1 an Funktion Ã¼bergeben %s" % (id1))
+    cbpi.app.logger.info("LCDDisplay  - id1 an Funktion übergeben %s" % (id1))
     s = cbpi.cache.get("active_step")
 
     #read the current temperature of kettle with id1 from parameters  
@@ -327,11 +327,11 @@ def show_singlemode(id1):
 	line2 = (u"Step: %s" % (s.name)).ljust(16)[:16]
 	line2_state = 1
     elif line2_state == 1:
-	line2 = (u"Targ. T:%6.2f%s" % (float(cbpi.cache.get("kettle")[id1].target_temp),(u"Â°C"))).ljust(16)[:16]
+	line2 = (u"Targ. T:%6.2f%s" % (float(cbpi.cache.get("kettle")[id1].target_temp),(u"°C"))).ljust(16)[:16]
 	line2_state = 2
     elif line2_state == 2:
 	try:
-		line2 = (u"Curr. T:%6.2f%s" % (float(current_sensor_value_id1),(u"Â°C"))).ljust(16)[:16]
+		line2 = (u"Curr. T:%6.2f%s" % (float(current_sensor_value_id1),(u"°C"))).ljust(16)[:16]
 	except:
 		cbpi.app.logger.info("LCDDisplay  - singlemode current_sensor_value_id1 exception %s" % (current_sensor_value_id1))
         	line2 = (u"Curr. Temp: %s" % (("No Data")))[:16]
@@ -353,11 +353,11 @@ def show_singlemode(id1):
 #        line2 = ((u'%s' % (cbpi.cache.get("kettle")[id1].name)).ljust(20)[:20])
 
     #line3
-#    line3 = (u"Targ. Temp:%6.2f%s" % (float(cbpi.cache.get("kettle")[id1].target_temp),(u"Â°C"))).ljust(20)[:20]
+#    line3 = (u"Targ. Temp:%6.2f%s" % (float(cbpi.cache.get("kettle")[id1].target_temp),(u"°C"))).ljust(20)[:20]
 
     #line4 needs errorhandling because there may be tempvalue without sensordates and so it is none and than an error is thrown
 #    try:
-#        line4 = (u"Curr. T:%6.2f%s" % (float(current_sensor_value_id1),(u"Â°C"))).ljust(16)[:16]
+#        line4 = (u"Curr. T:%6.2f%s" % (float(current_sensor_value_id1),(u"°C"))).ljust(16)[:16]
 #    except:
 #        cbpi.app.logger.info("LCDDisplay  - singlemode current_sensor_value_id1 exception %s" % (current_sensor_value_id1))
 #        line4 = (u"Curr. Temp: %s" % (("No Data")))[:16]
@@ -384,7 +384,7 @@ def show_singlemode(id1):
         global bk
         bk = 0
     lcd.cursor_pos = (1, 0)
-#    lcd.write_string (u"ÃŸ\x01\x00\x02\x03\x04\x05")
+#    lcd.write_string (u"ß\x01\x00\x02\x03\x04\x05")
     lcd.write_string(line2)
 #    lcd.cursor_pos = (2, 0)
 #    lcd.write_string(line3)
@@ -434,11 +434,11 @@ def show_fermentation_multidisplay(refresh):
             pass
         
         #line3    
-        line3 = (u"Targ. Temp:%6.2f%s" % (float(value.target_temp),(u"Â°C")))[:20]
+        line3 = (u"Targ. Temp:%6.2f%s" % (float(value.target_temp),(u"°C")))[:20]
         
         #line4 needs errorhandling because there may be tempvalue without sensordates and so it is none and than an error is thrown
         try:
-            line4 = (u"Curr. Temp:%6.2f%s" % (float(current_sensor_value),(u"Â°C")))[:20]
+            line4 = (u"Curr. Temp:%6.2f%s" % (float(current_sensor_value),(u"°C")))[:20]
         except:
             cbpi.app.logger.info("LCDDisplay  - fermentmode current_sensor_value exception %s" % (current_sensor_value))
             line4 = (u"Curr. Temp: %s" % (("No Data")))[:20]
